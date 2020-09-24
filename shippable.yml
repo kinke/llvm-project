@@ -23,7 +23,7 @@ build:
     - apt-get -q update
     - apt-get -yq install cmake curl git-core ninja-build p7zip-full binutils-dev
     - update-alternatives --install /usr/bin/ld ld /usr/bin/ld.gold 99
-    # Build & install LLVM incl. LLD, compiler-rt, MLIR and the Khronos SPIRV-LLVM-Translator
+    # Build & install LLVM incl. LLD, compiler-rt and the Khronos SPIRV-LLVM-Translator
     - cmake --version
     - ninja --version
     - mkdir build
@@ -35,13 +35,14 @@ build:
         -DLLVM_ENABLE_PROJECTS='compiler-rt;lld' \
         -DLLVM_TARGETS_TO_BUILD="AArch64;ARM;WebAssembly" \
         -DLLVM_ENABLE_ASSERTIONS=$LLVM_ENABLE_ASSERTIONS \
+        -DLLVM_ENABLE_UNWIND_TABLES=OFF \
+        -DLLVM_ENABLE_TERMINFO=OFF \
+        -DLLVM_ENABLE_LIBEDIT=OFF \
         -DCOMPILER_RT_INCLUDE_TESTS=OFF \
         -DLLVM_INCLUDE_TESTS=OFF \
         -DCOMPILER_RT_USE_LIBCXX=OFF \
-        -DLLVM_ENABLE_TERMINFO=OFF \
-        -DLLVM_ENABLE_LIBEDIT=OFF \
         -DLLVM_BINUTILS_INCDIR=/usr/include \
-        -DCMAKE_CXX_FLAGS='-static-libstdc++ -Wno-class-memaccess -Wno-cast-function-type'
+        -DLLVM_STATIC_LINK_CXX_STDLIB=ON
     - ninja -j64 install
     - cd ..
     # Pack installation dir
